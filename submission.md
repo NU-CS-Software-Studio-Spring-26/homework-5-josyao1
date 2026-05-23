@@ -164,13 +164,50 @@ Done when:    bin/rails test passes and creating a todo with a due date in the b
 
 ## Part 4 — Turbo Streams
 
+### Claude's answers to the discover questions
+
+**Q1: What is a Turbo Stream and how does it differ from a normal HTML response?**
+
+A Turbo Stream is a server response that surgically updates one or more pieces of the page without a full reload. Instead of returning a complete HTML document, it returns one or more `<turbo-stream>` custom elements that each target a DOM element by ID and declare what to do to it.
+
+- **MIME type:** `text/vnd.turbo-stream.html` (vs `text/html` for a normal response)
+- **Controller pattern:** wrap in `respond_to` with a `format.turbo_stream` branch alongside `format.html`
+- **View convention:** `app/views/todos/action_name.turbo_stream.erb` — Rails picks it up automatically when the request Accept header includes the Turbo Stream MIME type
+
+**Q2: The 7 Turbo Stream actions:**
+
+| Action | One-line use case |
+|---|---|
+| `append` | Add a newly created todo to the bottom of the list |
+| `prepend` | Insert a new notification at the top of an inbox |
+| `replace` | Swap out an entire todo row (element + wrapper) after editing |
+| `update` | Refresh just the inner content of a row without replacing the wrapper div |
+| `remove` | Delete a todo row from the list after destroying it |
+| `before` | Insert a flash message above a specific element |
+| `after` | Insert a related item below its parent |
+
+**Q3: Existing Turbo Stream responses in this project?**
+
+None. No `.turbo_stream.erb` files exist and no `format.turbo_stream` calls appear anywhere in `app/`.
+
+**Q4: Where would `format.turbo_stream` go for `toggle_priority`?**
+
+In `TodosController#toggle_priority`, inside a `respond_to` block. The matching view would live at `app/views/todos/toggle_priority.turbo_stream.erb`.
+
+---
+
 ### My explanation of Turbo Streams
 
-<!-- write your own explanation here -->
+A Turbo Stream lets a server send back a small HTML fragment that patches a small part of the page without replacing the whole thing. The browser will know its a stream because the 
+response comes back witha special MIME type that TUrbo automatically adds to the accept header on the form submision. On the server side, there will be a `forma.turbo_stream` branch which contains elements actions or targets for the DOM to update. The result is the nice page update without a full reload and no need for custom Javascript.
 
 ### What I verified against the Turbo Streams handbook
 
-<!-- paste what the AI said, then what the handbook confirmed -->
+**What Claude said:** There are 7 Turbo Stream actions: `append`, `prepend`, `replace`, `update`, `remove`, `before`, `after`.
+
+**What the handbook says:** There are actually **8** actions — the handbook explicitly lists `append`, `prepend`, `replace`, `update`, `remove`, `before`, `after`, and **`refresh`**. I missed `refresh`, which triggers a full page refresh without a navigation event (useful for cache invalidation).
+
+**What was confirmed correct:** The MIME type (`text/vnd.turbo-stream.html`), the `respond_to` / `format.turbo_stream` controller pattern, and the `.turbo_stream.erb` view filename convention all match the handbook exactly.
 
 ### PR
 
