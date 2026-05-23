@@ -73,20 +73,49 @@ Output:
 ### Ask mode
 
 **Prompt:**
+```
+Where in this codebase is the todos index rendering each todo row currently implemented?
+Cite exact files and line numbers. Do not propose changes.
+```
 
 **Files + line numbers returned:**
 
+The behavior is implemented across three layers:
+
+1. **`app/controllers/todos_controller.rb`, line 6** — `@todos = Todo.all` loads every todo and assigns it to the instance variable the view iterates over.
+
+2. **`app/views/todos/index.html.erb`, lines 7–13** — A `<div id="todos">` wraps a loop (`@todos.each`) at line 8. Line 9 calls `render todo` for each record; Rails resolves this to the `_todo` partial by convention.
+
+3. **`app/views/todos/_todo.html.erb`, lines 1–7** — The actual row markup. Each todo is wrapped in a `<div>` whose `id` is set by `dom_id todo` (line 1), then renders `todo.description` inside a `<strong>` label (line 4).
+
 **Verified (real or hallucinated?):**
+All three citations are real and verified against the actual files.
 
 ---
 
 ### Plan mode
 
 **Prompt:**
+```
+I want to change how the todos index renders each todo row so that completed todos are visually
+separated from incomplete ones. Propose a plan as a numbered list including files to edit, new
+tests to add, and any migration. Do not write code.
+```
 
 **Plan returned:**
 
+1. **Migration** — add a `completed` boolean to `todos` with `default: false, null: false`. Run `bin/rails db:migrate`.
+2. **Model (`app/models/todo.rb`)** — add two scopes: `incomplete` and `completed`, each ordered by `created_at`.
+3. **Controller (`app/controllers/todos_controller.rb`)** — in `#index`, replace `Todo.all` with two instance variables `@incomplete_todos` and `@completed_todos` using the new scopes. Also add `:completed` to `todo_params`.
+4. **Index view (`app/views/todos/index.html.erb`)** — replace the single loop with two labeled sections, one for each instance variable.
+5. **Todo partial (`app/views/todos/_todo.html.erb`)** — add a visual treatment (inline style or CSS class) for completed todos.
+6. **Tests:**
+   - `test/models/todo_test.rb` — test that each scope returns only the right records
+   - `test/controllers/todos_controller_test.rb` — test that `GET /todos` assigns both collections correctly
+
 **My edits to the plan:**
+
+Removed the `:completed` addition to `todo_params` from step 3 — that's scope creep. The prompt is only about visual separation on the index; toggling completion state belongs in a separate feature with its own action.
 
 ---
 
