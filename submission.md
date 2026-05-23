@@ -122,8 +122,12 @@ Removed the `:completed` addition to `todo_params` from step 3 — that's scope 
 ### Agent mode
 
 **Prompt:**
+```
+Implement only step 2 from the plan: add incomplete and completed scopes to app/models/todo.rb.
+Do not touch any other files.
+```
 
-**Commit link:**
+**Commit link:** [fa36c4d](https://github.com/NU-CS-Software-Studio-Spring-26/homework-5-josyao1/commit/fa36c4d69204d5d95f627f96353b3eac33116298)
 
 ---
 
@@ -136,12 +140,24 @@ fix the bug in todos
 
 **Good:**
 ```
-Context:      ...
-Task:         ...
-Expected:     ...
-Actual:       ...
-Constraints:  ...
-Done when:    ...
+Context:      The todos table has a due_date column (db/schema.rb line 18) but the form
+              partial (app/views/todos/_form.html.erb) has no due_date field, and the
+              controller (app/controllers/todos_controller.rb line 75) only permits
+              :description in todo_params.
+
+Task:         Add a due_date datetime field to the form and permit :due_date in
+              todo_params so users can set a due date when creating or editing a todo.
+
+Expected:     Submitting the new/edit form with a due date persists that value to the DB.
+
+Actual:       due_date is always nil after create/update — there is no field in the form
+              and the param is stripped by strong parameters even if sent manually.
+
+Constraints:  Only touch app/views/todos/_form.html.erb and
+              app/controllers/todos_controller.rb. No new gems.
+
+Done when:    bin/rails test passes and creating a todo with a due date in the browser
+              saves a non-nil due_date to the database.
 ```
 
 ---
