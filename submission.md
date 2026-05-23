@@ -174,7 +174,7 @@ A Turbo Stream is a server response that surgically updates one or more pieces o
 - **Controller pattern:** wrap in `respond_to` with a `format.turbo_stream` branch alongside `format.html`
 - **View convention:** `app/views/todos/action_name.turbo_stream.erb` — Rails picks it up automatically when the request Accept header includes the Turbo Stream MIME type
 
-**Q2: The 7 Turbo Stream actions:**
+**Q2: The 8 Turbo Stream actions:**
 
 | Action | One-line use case |
 |---|---|
@@ -198,8 +198,7 @@ In `TodosController#toggle_priority`, inside a `respond_to` block. The matching 
 
 ### My explanation of Turbo Streams
 
-A Turbo Stream lets a server send back a small HTML fragment that patches a small part of the page without replacing the whole thing. The browser will know its a stream because the 
-response comes back witha special MIME type that TUrbo automatically adds to the accept header on the form submision. On the server side, there will be a `forma.turbo_stream` branch which contains elements actions or targets for the DOM to update. The result is the nice page update without a full reload and no need for custom Javascript.
+A Turbo Stream lets a server send back a small HTML fragment that patches a small part of the page without replacing the whole thing. The browser will know it's a stream because the response comes back with a special MIME type that Turbo automatically adds to the accept header on the form submission. On the server side, there will be a `format.turbo_stream` branch which contains element actions or targets for the DOM to update. The result is the nice page update without a full reload and no need for custom Javascript.
 
 ### What I verified against the Turbo Streams handbook
 
